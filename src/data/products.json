@@ -1,0 +1,13 @@
+[
+  {
+    "id": "78ccce84-210c-471b-a99a-098a171c0166",
+    "title": "Iphone 14 pro",
+    "description": "Iphone 14 de 265 GB",
+    "price": 399.99,
+    "thumbnail": "url_de_la_imagen",
+    "code": "123ABC",
+    "stock": 10,
+    "status": true,
+    "category": "Electrónicos"
+  }
+]
