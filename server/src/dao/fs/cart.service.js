@@ -1,4 +1,5 @@
 import fs from 'fs';
+import { logger } from '../../config/logger_CUSTOM.js';
 
 export default class CartManager {
     constructor(path) {
@@ -9,7 +10,7 @@ export default class CartManager {
         try {
             await fs.promises.writeFile(this.path, JSON.stringify(data, null, 2));
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -24,7 +25,7 @@ export default class CartManager {
             await this.writeFile(carts);
             return {code: 200, status: `Carrito agregado con id: ${newCart.id}`};
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -34,7 +35,7 @@ export default class CartManager {
             return JSON.parse(carts);
         } catch (error) {
             if(error.message.includes('no such file or directory')) return [];
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -44,7 +45,7 @@ export default class CartManager {
             const cart = carts.find(cart => cart.id === id);
             return cart ? cart.products : false;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -64,7 +65,7 @@ export default class CartManager {
           await this.writeFile(carts);
           return {code: 200, status: 'producto agregado al carrito'};
         } catch (error) {
-          console.log(error);
+          logger.error(error);
         }
       };
       

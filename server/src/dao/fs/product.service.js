@@ -10,7 +10,7 @@ export default class ProductManager {
             const products = await this.getProducts();
             return products.some((product) => product.code === code);
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
     
@@ -37,7 +37,7 @@ export default class ProductManager {
         try {
             await fs.promises.writeFile(this.path, JSON.stringify(data, null, 2));
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -58,7 +58,7 @@ export default class ProductManager {
             await this.writeFile(products);
             return {code: 200, status: 'Producto agregado', product: newProduct};
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -68,7 +68,7 @@ export default class ProductManager {
             return JSON.parse(products);
         } catch (error) {
             if(error.message.includes('no such file or directory')) return [];
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -78,7 +78,7 @@ export default class ProductManager {
             const product = products.find(product => product.id === id);
             return product ? product : false;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -94,7 +94,7 @@ export default class ProductManager {
                 return {code: 404, status: 'Producto no existe'};
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -114,7 +114,7 @@ export default class ProductManager {
                 return {code: 404, status: 'Producto no encontrado'};
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 }

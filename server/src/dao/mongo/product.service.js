@@ -1,4 +1,5 @@
 import { MODEL_PRODUCTS } from "../../models/product.model.js";
+import { logger } from "../../config/logger_CUSTOM.js";
 
 export default class ProductManager {
 
@@ -7,7 +8,7 @@ export default class ProductManager {
             const products = await this.getProducts();
             return products.some((product) => product.code === code);
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
     
@@ -38,7 +39,7 @@ export default class ProductManager {
             let result = await MODEL_PRODUCTS.create(product);
             return { code: 200, status: 'Producto agregado', product: result };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -47,7 +48,7 @@ export default class ProductManager {
             const products = await MODEL_PRODUCTS.paginate(optionsQuery, options);
             return products;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -56,7 +57,7 @@ export default class ProductManager {
             const product = await MODEL_PRODUCTS.findById(id);
             return product ? product : false;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -70,7 +71,7 @@ export default class ProductManager {
                 return { code: 404, status: 'Producto no existe' };
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -83,7 +84,7 @@ export default class ProductManager {
                 return { code: 404, status: 'Producto no encontrado' };
             }
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 }

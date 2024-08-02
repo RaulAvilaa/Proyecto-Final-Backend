@@ -1,6 +1,7 @@
 import { MODEL_CARTS } from "../../models/cart.model.js";
 import { MODEL_PRODUCTS } from "../../models/product.model.js";
 import { MODEL_TICKETS } from "../../models/ticket.model.js";
+import { logger } from "../../config/logger_CUSTOM.js";
 
 export default class CartManager {
 
@@ -12,7 +13,7 @@ export default class CartManager {
             const result = await MODEL_CARTS.create(newCart);
             return { code: 200, status: `Carrito agregado con id: ${result.id}` };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -21,7 +22,7 @@ export default class CartManager {
             const carts = await MODEL_CARTS.find();
             return carts.map(cart => cart.toObject());
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -30,7 +31,7 @@ export default class CartManager {
             const cart = await MODEL_CARTS.findById(id).populate('products.product');
             return cart ? cart.products : false;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -49,7 +50,7 @@ export default class CartManager {
             await cart.save();
             return { code: 200, status: 'producto agregado al carrito' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -64,7 +65,7 @@ export default class CartManager {
             }
             return { code: 404, status: 'Producto no encontrado en el carrito' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
     
@@ -79,13 +80,13 @@ export default class CartManager {
             }
             return { code: 404, status: 'Carrito no encontrado' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
     
     async updateProductQuantity(cid, pid, quantity) {
         try {
-            console.log(`cid: ${cid}, pid: ${pid}, quantity: ${quantity}`);
+            logger.debug(`cid: ${cid}, pid: ${pid}, quantity: ${quantity}`);
             const result = await MODEL_CARTS.updateOne(
                 { _id: cid, 'products.product': pid },
                 { $set: { 'products.$.quantity': quantity } }
@@ -95,7 +96,7 @@ export default class CartManager {
             }
             return { code: 404, status: 'Producto no encontrado en el carrito' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -110,7 +111,7 @@ export default class CartManager {
             }
             return { code: 404, status: 'Carrito no encontrado' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -119,12 +120,12 @@ export default class CartManager {
             const cart = await MODEL_CARTS.findById(cid).populate('products.product');
             return cart;
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
     async updateProduct(productId, productData) {
-        console.log(productData)
+        logger.info(productData)
         try {
             const result = await MODEL_PRODUCTS.updateOne({ _id: productId }, { $set: { stock: productData.stock } });
             if (result.acknowledged === true) {
@@ -132,7 +133,7 @@ export default class CartManager {
             }
             return { code: 404, status: 'Producto no encontrado en el carrito' };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
         }
     }
 
@@ -141,7 +142,7 @@ export default class CartManager {
             const result = await MODEL_TICKETS.create(ticketData);
             return { code: 200, status: 'Ticket creado', ticket: result };
         } catch (error) {
-            console.log(error);
+            logger.error(error);
             return { code: 500, status: 'Ocurrió un error al crear el ticket' };
         }
     }

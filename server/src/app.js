@@ -9,6 +9,10 @@ import passport from 'passport';
 import initializePassport from './config/passport.config.js';
 import envConfig from "./config/env.config.js";
 import MongoSingleton from "./config/mongodb-singleton.js";
+import compression from "express-compression";
+import { addLogger, logger } from "./config/logger_CUSTOM.js";
+import { swaggerSpecs } from "./swaggerSpecs.js";
+import swaggerUi from 'swagger-ui-express';
 
 const app = express();
 const server = http.createServer(app);
@@ -45,28 +49,34 @@ initializePassport();
 app.use(passport.initialize())
 app.use(passport.session())
 
+app.use(compression());
+
+app.use(addLogger);
+
 app.use('/', router);
 
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpecs));
+
 io.on('connection', socket => {
-    console.log('Nuevo cliente conectado');
+    logger.info('Nuevo cliente conectado');
     socket.on('disconnect', () => {
-        console.log('Un cliente se ha desconectado');
+        logger.info('Un cliente se ha desconectado');
     });
 });
 
 server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    logger.info(`Server running on port ${PORT}`);
 });
 
 export function getIO() {
     return io;
 }
 
-const connectMongoDB = async () => {
+const connectMongoDB = async (req, res) => {
     try {
         await MongoSingleton.getIntance()
     } catch (error) {
-        console.error("No se pudo conectar a la BD usando Moongose: " + error);
+        logger.error("No se pudo conectar a la BD usando Moongose: " + error);
         process.exit();
     }
 };

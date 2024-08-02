@@ -1,5 +1,7 @@
 import ProductManager from "../dao/mongo/product.service.js";
 import { getIO } from "../app.js";
+import CustomError from "../services/errors/CustomErrors.js";
+import { noFindProductErrorInfo } from "../services/errors/errors.messages.js";
 
 const manager = new ProductManager();
 
@@ -64,13 +66,24 @@ export const addProductControllers = async (req, res) => {
 };
 
 export const getProductByIdControllers = async (req, res) => {
-    const { pid } = req.params;
-    const product = await manager.getProductById(pid);
-    if(product) {
-        res.send({status: "success", payload: product });
-    } else {
-        res.status(404).json({'error': 'Producto no encontrado'});
+    try {
+        const { pid } = req.params;
+        const product = await manager.getProductById(pid);
+        if(product) {
+            res.status(200).send({status: "success", payload: product });
+        } else {
+            CustomError.createError({
+                name: "Producto no encontrado",
+                cause: noFindProductErrorInfo(pid),
+                message: "Error buscando el producto",
+                code: EErrors.DATABASE_ERROR
+            })
+        }
+    } catch (error) {
+        req.logger.error(error);
+        res.status(404).json({error: error.code, message: error.message});
     }
+
 };
 
 export const updateProductByIdControllers = async (req, res) => {

@@ -4,6 +4,7 @@ import GitHubStrategy from 'passport-github2';
 import envConfig from './env.config.js';
 import { MODEL_USER } from '../models/user.model.js';
 import { createHash, isValidPassword } from '../utils/index.js';
+import { logger } from './logger_CUSTOM.js';
 
 const PORT = process.env.PORT;
 const localStrategy = passportLocal.Strategy
@@ -17,16 +18,16 @@ const initializePassport = () => {
         callbackUrl: `http://localhost:${PORT}/api/sessions/githubcallback`
     },
     async (accessToken, refreshToken, profile, done) => {
-        console.log("Profile obtenido del usuario: ");
-        console.log(profile);
+        logger.info("Profile obtenido del usuario: ");
+        logger.info(profile);
 
         try {
             const user = await MODEL_USER.findOne({ email: profile._json.email })
-            console.log("Usuario encontrado para login:");
-            console.log(user);
+            logger.info("Usuario encontrado para login:");
+            logger.info(user);
 
             if (!user) {
-                console.warn("User doesn't exists with username: " + profile._json.email);
+                logger.warn("User doesn't exists with username: " + profile._json.email);
                 let newUser = {
                     first_name: profile._json.name,
                     last_name: '',
@@ -84,7 +85,7 @@ const initializePassport = () => {
             try {
                 const user = await MODEL_USER.findOne({ email: username })
                 if (!user) {
-                    console.warn("User doesn't exist with username: " + username);
+                    logger.warn("User doesn't exist with username: " + username);
                     return done(null, false)
                 }
                 if (!isValidPassword(user, password)) {
@@ -106,7 +107,7 @@ const initializePassport = () => {
             let user = await MODEL_USER.findById(id);
             done(null, user);
         } catch (error) {
-            console.error("Error deserializando el usuario: " + error);
+            logger.error("Error deserializando el usuario: " + error);
         }
     });
 
